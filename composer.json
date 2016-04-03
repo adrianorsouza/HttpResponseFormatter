@@ -1,0 +1,21 @@
+{
+  "name": "adrianorosa/http-response-formatter",
+  "description": "Laravel Response Formatter",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Adriano Rosa",
+      "email": "info@adrianorosa.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "AdrianoRosa\\HttpResponse\\": ""
+    }
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "laravel/framework": "5.2.*"
+  }
+}
