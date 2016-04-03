@@ -29,8 +29,8 @@ class Response extends BaseResponse
             $this->statusCode = $code;
         }
 
-        if ( empty($data) ) {
-            $data = $this->content ?: [];
+        if ( count($data) === 0 ) {
+            $data = $this->content;
         }
 
         if ( $data instanceof \Illuminate\Support\Collection
@@ -41,7 +41,7 @@ class Response extends BaseResponse
 
         $status = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : 'error';
 
-        if ( is_string($data) ) {
+        if ( is_scalar($data) ) {
             $data = (array) $data;
         }
 
