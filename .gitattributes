@@ -1,0 +1,12 @@
+* text=auto
+
+*.php diff=php
+
+# These should always be text files
+*.php           text
+*.js            text
+*.htaccess      text
+*.html          text
+*.markdown      text
+*.txt           text
+*.json          text
