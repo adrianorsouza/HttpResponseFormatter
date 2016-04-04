@@ -26,7 +26,7 @@ class Response extends BaseResponse
     public function safeJson($data = [], $code = null, $headers = [])
     {
         if ( ! is_null($code) ) {
-            $this->statusCode = $code;
+            $this->setStatusCode($code);
         }
 
         if ( count($data) === 0 ) {
