@@ -39,7 +39,7 @@ class Response extends BaseResponse
             $data = $data->toArray();
         }
 
-        $status = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : 'error';
+        $status = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : $this->statusText;
 
         if ( is_scalar($data) ) {
             $data = (array) $data;
@@ -57,6 +57,25 @@ class Response extends BaseResponse
         ];
 
         return $this->setContent($safeResponse)->withHeaders(array_merge($default, $headers));
+    }
+
+    /**
+     * @param $statusCode
+     * @param int $errorCode
+     * @param string $errorDescription
+     *
+     * @param array $headers
+     *
+     * @return \AdrianoRosa\HttpResponse\Response
+     */
+    public function safeJsonError($errorCode = 0, $errorDescription = '', $statusCode = null, $headers = [])
+    {
+        $statusCode = $statusCode ?: $errorCode;
+
+        return $this->safeJson([
+            'errorCode' => $errorCode,
+            'errorDescription' => $errorDescription,
+        ], $statusCode, $headers);
     }
 
     /**
