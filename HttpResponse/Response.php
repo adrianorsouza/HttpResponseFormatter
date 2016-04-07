@@ -15,6 +15,26 @@ use \Illuminate\Http\Response as BaseResponse;
 class Response extends BaseResponse
 {
     /**
+     * @var array
+     */
+    protected $append = [];
+
+    /**
+     * Append data to the response formatter.
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
+    public function with($key, $value)
+    {
+        $this->append[$key] = $value;
+
+        return $this;
+    }
+
+    /**
      * Format a safe JSON Response.
      *
      * @param array $data
@@ -45,10 +65,14 @@ class Response extends BaseResponse
             $data = (array) $data;
         }
 
-        $content = $this->morphToJson(
-            (new ResponseFormatter($data, $this->statusCode, $status))
-                ->getResponse()
-        );
+        $formatter = (new ResponseFormatter($data, $this->statusCode, $status));
+
+        // append other data to response formatter
+        if ( count($this->append) > 0 ) {
+            $formatter->add($this->append);
+        }
+
+        $content = $this->morphToJson($formatter->getResponse());
 
         $safeResponse = ")]}',\n" . $content;
 

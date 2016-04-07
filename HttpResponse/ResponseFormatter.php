@@ -40,11 +40,16 @@ class ResponseFormatter
         return $this;
     }
 
+    public function add($key, $value = null)
+    {
+        return $this->setAppendToResponse($key, $value);
+    }
+
     /**
      * @param mixed $key
      * @param mixed $value
      *
-     * @deprecated
+     * @deprecated in favor of ResponseFormatter::add()
      * @return $this
      */
     public function setAppendToResponse($key, $value = null)
