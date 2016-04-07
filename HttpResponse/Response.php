@@ -62,7 +62,7 @@ class Response extends BaseResponse
         $status = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : $this->statusText;
 
         if ( is_scalar($data) ) {
-            $data = (array) $data;
+            $data = empty($data) ? [] : (array) $data;
         }
 
         $formatter = (new ResponseFormatter($data, $this->statusCode, $status));
