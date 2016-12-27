@@ -40,23 +40,17 @@ class ResponseFormatter
         return $this;
     }
 
-    public function add($key, $value = null)
-    {
-        return $this->setAppendToResponse($key, $value);
-    }
-
     /**
      * @param mixed $key
      * @param mixed $value
      *
-     * @deprecated in favor of ResponseFormatter::add()
      * @return $this
      */
-    public function setAppendToResponse($key, $value = null)
+    public function add($key, $value = null)
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
-                $this->setAppendToResponse($k, $v);
+                $this->add($k, $v);
             }
             return $this;
         }
@@ -74,34 +68,5 @@ class ResponseFormatter
     public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * Get the response data formatted
-     *
-     * @deprecated
-     * @return array
-     */
-    public function getResponseData()
-    {
-        return $this->response['data'];
-    }
-
-    /**
-     * @deprecated
-     * @return mixed
-     */
-    public function getStatusCode()
-    {
-        return $this->response['code'];
-    }
-
-    /**
-     * @deprecated
-     * @return mixed
-     */
-    public function getStatus()
-    {
-        return $this->response['status'];
     }
 }
