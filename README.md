@@ -7,19 +7,20 @@ Small library to send a proper safe JSON `)]}',\n` format response with Laravel.
 
 Returning safe json preceded with `)]}',\n` formatted response:
 
-    <?php
-    use AdrianoRosa\HttpResponse\Response;
-    
-    $data = ['foo' => 'bar'];
-    
-    $response = Response::create()->safeJson($data);
-    
-    // )]}',\n
-    // {"code":200,"status":"success","data":{"foo":"bar"}}
+```php
+  use AdrianoRosa\HttpResponse\Response;
+  
+  $data = ['foo' => 'bar'];
+  
+  $response = Response::create()->safeJson($data);
+  
+  // )]}',\n
+  // {"code":200,"status":"success","data":{"foo":"bar"}}
+```
 
 Returning default json formatted response:
 
-    <?php
+```php
     use AdrianoRosa\HttpResponse\Response;
     
     $data = ['foo' => 'bar'];
@@ -27,6 +28,7 @@ Returning default json formatted response:
     $response = Response::create()->toJson($data);
     
     // {"code":200,"status":"success","data":{"foo":"bar"}}
+```
 
 ## Version 0.2.x
 Compatible with Laravel 5.3
