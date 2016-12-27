@@ -43,6 +43,46 @@ class Response extends BaseResponse
      *
      * @return $this
      */
+    public function toJson($data = [], $code = null, $headers = [])
+    {
+        if ( ! is_null($code) ) {
+            $this->setStatusCode($code);
+        }
+
+        if ( count($data) === 0 ) {
+            $data = $this->content;
+        }
+
+        if ( $data instanceof \Illuminate\Support\Collection
+            || $data instanceof \Illuminate\Database\Eloquent\Model
+        ) {
+            $data = $data->toArray();
+        }
+
+        if ( is_scalar($data) ) {
+            $data = empty($data) ? [] : (array) $data;
+        }
+
+        $statusText = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : $this->statusText;
+
+        $content = (new ResponseFormatter($data, $this->statusCode, $statusText));
+
+        $default = [
+            'Content-Type' => 'application/json'
+        ];
+
+        return $this->setContent($content->getResponse())->withHeaders(array_merge($default, $headers));;
+    }
+
+    /**
+     * Format a safe JSON Response.
+     *
+     * @param array $data
+     * @param int $code
+     * @param array $headers
+     *
+     * @return $this
+     */
     public function safeJson($data = [], $code = null, $headers = [])
     {
         if ( ! is_null($code) ) {
