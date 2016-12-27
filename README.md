@@ -7,6 +7,7 @@ Small library to send a proper safe JSON `)]}',\n` format response with Laravel.
 
 Returning safe json preceded with `)]}',\n` formatted response:
 
+    <?php
     use AdrianoRosa\HttpResponse\Response;
     
     $data = ['foo' => 'bar'];
@@ -18,6 +19,7 @@ Returning safe json preceded with `)]}',\n` formatted response:
 
 Returning default json formatted response:
 
+    <?php
     use AdrianoRosa\HttpResponse\Response;
     
     $data = ['foo' => 'bar'];
