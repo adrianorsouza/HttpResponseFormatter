@@ -17,16 +17,26 @@ class ResponseTest extends TestCase
         ];
 
         $response = Response::create()->toJson($data);
+        $content = json_decode($response->getContent(), true);
 
         $this->assertInstanceOf('AdrianoRosa\HttpResponse\Response', $response);
         $this->assertEquals('{"code":200,"status":"success","data":{"foo":"bar"}}', $response->getContent());
-
-        $content = json_decode($response->getContent(), true);
 
         $this->assertArrayHasKey('code', $content);
         $this->assertArrayHasKey('status', $content);
         $this->assertArrayHasKey('data', $content);
         $this->assertArrayHasKey('foo', $content['data']);
+
+        // Test for append data
+        $response = Response::create()->with('Music', ['Jazz', 'Pop', 'Rock'])->toJson($data);
+        $content = json_decode($response->getContent(), true);
+
+        $this->assertEquals('{"code":200,"status":"success","data":{"foo":"bar"},"Music":["Jazz","Pop","Rock"]}', $response->getContent());
+        $this->assertArrayHasKey('code', $content);
+        $this->assertArrayHasKey('status', $content);
+        $this->assertArrayHasKey('data', $content);
+        $this->assertArrayHasKey('foo', $content['data']);
+        $this->assertArrayHasKey('Music', $content);
     }
 
     public function testResponseSafeJson()
@@ -36,17 +46,32 @@ class ResponseTest extends TestCase
         ];
 
         $response = Response::create()->safeJson($data);
+        $content = $this->fromSafeJson($response);
 
         $this->assertInstanceOf('AdrianoRosa\HttpResponse\Response', $response);
 
-        $content = $this->fromSafeJson($response);
-
-        $this->assertEquals('{"code":200,"status":"success","data":{"foo":"bar"}}', $this->fromSafeJson($response, true));
-
+        $this->assertEquals(
+            '{"code":200,"status":"success","data":{"foo":"bar"}}',
+            $this->fromSafeJson($response, true)
+        );
         $this->assertArrayHasKey('code', $content);
         $this->assertArrayHasKey('status', $content);
         $this->assertArrayHasKey('data', $content);
         $this->assertArrayHasKey('foo', $content['data']);
+
+        // Test for append data
+        $response = Response::create()->with('Music', ['Jazz', 'Pop', 'Rock'])->safeJson($data);
+        $content = $this->fromSafeJson($response);
+
+        $this->assertEquals(
+            '{"code":200,"status":"success","data":{"foo":"bar"},"Music":["Jazz","Pop","Rock"]}',
+            $this->fromSafeJson($response, true)
+        );
+        $this->assertArrayHasKey('code', $content);
+        $this->assertArrayHasKey('status', $content);
+        $this->assertArrayHasKey('data', $content);
+        $this->assertArrayHasKey('foo', $content['data']);
+        $this->assertArrayHasKey('Music', $content);
     }
 
     public function testResponseToJsonPayloadString()
