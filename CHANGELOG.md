@@ -1,3 +1,10 @@
+v0.2.1
+------
+- minor refactoring
+- refactor `Response::toJson()` and `Response::safeJson()`
+- add `Response::jsonError()` and `Response::safeJsonError()`
+- add testing append data
+- add callStatic `Response::json()`, `Response::sjson()`, `Response::error()`, `Response::serror()` methods 
 
 v0.2.0
 ------
