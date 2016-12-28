@@ -20,7 +20,26 @@ class Response extends BaseResponse
     protected $append = [];
 
     /**
-     * Append data to the response formatter.
+     * Factory method for chainability.
+     *
+     * Example:
+     *
+     *     return Response::create($body, 200)
+     *         ->setSharedMaxAge(300);
+     *
+     * @param mixed $content The response content, see setContent()
+     * @param int   $status  The response status code
+     * @param array $headers An array of response headers
+     *
+     * @return Response
+     */
+    public static function create($content = '', $status = 200, $headers = array())
+    {
+        return new static($content, $status, $headers);
+    }
+
+    /**
+     * Appends data to the response formatter.
      *
      * @param $key
      * @param $value
@@ -142,21 +161,6 @@ class Response extends BaseResponse
         ], $statusCode, $headers);
     }
 
-    /**
-     * Factory method for chainability.
-     *
-     * Example:
-     *
-     *     return Response::create($body, 200)
-     *         ->setSharedMaxAge(300);
-     *
-     * @param mixed $content The response content, see setContent()
-     * @param int   $status  The response status code
-     * @param array $headers An array of response headers
-     *
-     * @return Response
-     */
-    public static function create($content = '', $status = 200, $headers = array())
     {
         return new static($content, $status, $headers);
     }
