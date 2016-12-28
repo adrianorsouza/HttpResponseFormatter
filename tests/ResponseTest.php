@@ -124,4 +124,38 @@ class ResponseTest extends TestCase
         $this->assertArrayHasKey('x-foo', $response->headers->all());
         $this->assertEquals('Bar', $response->headers->get('x-foo'));
     }
+
+    public function testResponseJSONError()
+    {
+        $response = Response::create()->jsonError('No status code defined');
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('No status code defined', $data['data']['errorDescription']);
+
+        $response = Response::create()->jsonError('Not Found', 404);
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $response = Response::create()->jsonError('Generic error code defined', 4001)->setStatusCode(401);
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals(
+            '{"code":200,"status":"success","data":{"errorCode":4001,"errorDescription":"Generic error code defined"}}',
+            $response->getContent()
+        );
+    }
+
+    public function testResponseSafeJSONError()
+    {
+        $response = Response::create()->safeJsonError('No status code defined');
+        $data = $this->fromSafeJson($response);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('No status code defined', $data['data']['errorDescription']);
+
+        $response = Response::create()->safeJsonError('Not Found', 404);
+        $this->assertEquals(404, $response->getStatusCode());
+
+        $response = Response::create()->safeJsonError('Generic error code defined', 4001)->setStatusCode(401);
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertAngularJsonResponse($response->getContent());
+    }
 }

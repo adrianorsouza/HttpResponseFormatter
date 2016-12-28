@@ -102,8 +102,6 @@ class Response extends BaseResponse
         return $this;
     }
 
-    }
-
     /**
      * Format a safe JSON Response.
      *
@@ -125,25 +123,44 @@ class Response extends BaseResponse
     }
 
     /**
-     * @param $statusCode
-     * @param int $errorCode
-     * @param string $errorDescription
+     * Return the json error formatted response.
      *
+     * @param string $errorDescription
+     * @param int $errorCode
      * @param array $headers
      *
      * @return \AdrianoRosa\HttpResponse\Response
      */
-    public function safeJsonError($errorCode = 0, $errorDescription = '', $statusCode = null, $headers = [])
+    public function jsonError($errorDescription = '', $errorCode = null, $headers = [])
     {
-        $statusCode = $statusCode ?: $errorCode;
+        $statusCode = null;
 
-        return $this->safeJson([
+        if ( array_key_exists($errorCode, self::$statusTexts) ) {
+            $statusCode = $errorCode;
+        }
+
+        return $this->toJson([
             'errorCode' => $errorCode,
             'errorDescription' => $errorDescription,
         ], $statusCode, $headers);
     }
 
+    /**
+     * Return the safe json error formatted response.
+     *
+     * @param string $errorDescription
+     * @param int $errorCode
+     * @param array $headers
+     *
+     * @return \AdrianoRosa\HttpResponse\Response
+     */
+    public function safeJsonError($errorDescription = '', $errorCode = null, $headers = [])
     {
-        return new static($content, $status, $headers);
+        $this->jsonError($errorDescription, $errorCode, $headers);
+
+        $this->setContent(")]}',\n" . $this->content);
+
+        return $this;
+    }
     }
 }
