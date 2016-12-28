@@ -11,6 +11,11 @@ use \Illuminate\Http\Response as BaseResponse;
  * @date    02/04/16 14:51
  *
  * @package Http
+ *
+ * @method static|Response json($data = [], $code = null, $headers = [])
+ * @method static|Response sjson($data = [], $code = null, $headers = [])
+ * @method static|Response error($errorDescription = '', $errorCode = null, $headers = [])
+ * @method static|Response serror($errorDescription = '', $errorCode = null, $headers = [])
  */
 class Response extends BaseResponse
 {
@@ -41,8 +46,8 @@ class Response extends BaseResponse
     /**
      * Appends data to the response formatter.
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return $this
      */
@@ -162,5 +167,42 @@ class Response extends BaseResponse
 
         return $this;
     }
+
+    /**
+     * Magic method to allow easy chaining.
+     *
+     * @param $method
+     * @param $args
+     *
+     * @return static[]
+     */
+    public static function __callStatic($method, $args)
+    {
+        switch ($method) {
+            case 'json':
+                $function = 'toJson';
+                break;
+
+            case 'sjson':
+                $function = 'safeJson';
+                break;
+
+            case 'error':
+                $function = 'jsonError';
+                break;
+
+            case 'serror':
+                $function = 'safeJsonError';
+                break;
+
+            default:
+                break;
+        }
+
+        if ( isset($function) ) {
+            return call_user_func_array([static::create(), $function], $args);
+        }
+
+        throw new \BadMethodCallException('Call to undefined method ' . static::class . '::' . $method . '()');
     }
 }

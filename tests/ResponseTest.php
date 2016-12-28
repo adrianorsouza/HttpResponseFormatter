@@ -10,6 +10,7 @@ use AdrianoRosa\HttpResponse\Response;
  */
 class ResponseTest extends TestCase
 {
+
     public function testResponseToJson()
     {
         $data = [
@@ -182,5 +183,51 @@ class ResponseTest extends TestCase
         $response = Response::create()->safeJsonError('Generic error code defined', 4001)->setStatusCode(401);
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertAngularJsonResponse($response->getContent());
+    }
+
+    public function testStaticCalls()
+    {
+        $data = ['foo' => 'bar'];
+        $response = Response::json($data);
+        $content = json_decode($response->getContent(), true);
+
+        $this->assertInstanceOf('AdrianoRosa\HttpResponse\Response', $response);
+        $this->assertEquals('{"code":200,"status":"success","data":{"foo":"bar"}}', $response->getContent());
+
+        $this->assertArrayHasKey('code', $content);
+        $this->assertArrayHasKey('status', $content);
+        $this->assertArrayHasKey('data', $content);
+        $this->assertArrayHasKey('foo', $content['data']);
+
+        // From safeJson
+        $data = ['foo' => 'bar'];
+        $response = Response::sjson($data);
+        $content = $this->fromSafeJson($response);
+
+        $this->assertInstanceOf('AdrianoRosa\HttpResponse\Response', $response);
+        $this->assertAngularJsonResponse($response);
+
+        $this->assertArrayHasKey('code', $content);
+        $this->assertArrayHasKey('status', $content);
+        $this->assertArrayHasKey('data', $content);
+        $this->assertArrayHasKey('foo', $content['data']);
+
+        // Error
+        $response = Response::error('error description');
+        $content = json_decode($response->getContent(), true);
+        $this->assertEquals('error description', $content['data']['errorDescription']);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $response = Response::error('error description')->setStatusCode(405);
+        $this->assertEquals(405, $response->getStatusCode());
+
+        // safeError
+        $response = Response::serror('error description');
+        $content = $this->fromSafeJson($response);
+        $this->assertEquals('error description', $content['data']['errorDescription']);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $response = Response::serror('error description')->setStatusCode(405);
+        $this->assertEquals(405, $response->getStatusCode());
     }
 }
