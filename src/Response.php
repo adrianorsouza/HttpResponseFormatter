@@ -84,13 +84,24 @@ class Response extends BaseResponse
 
         $statusText = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : $this->statusText;
 
-        $content = (new ResponseFormatter($data, $this->statusCode, $statusText));
+        $formatter = (new ResponseFormatter($data, $this->statusCode, $statusText));
+
+        // append other data to response formatter
+        if ( count($this->append) > 0 ) {
+            $formatter->add($this->append);
+        }
 
         $default = [
             'Content-Type' => 'application/json'
         ];
 
-        return $this->setContent($content->getResponse())->withHeaders(array_merge($default, $headers));;
+        $content = $this->morphToJson($formatter->getResponse());
+
+        $this->setContent($content)->withHeaders(array_merge($default, $headers));
+
+        return $this;
+    }
+
     }
 
     /**
@@ -104,42 +115,13 @@ class Response extends BaseResponse
      */
     public function safeJson($data = [], $code = null, $headers = [])
     {
-        if ( ! is_null($code) ) {
-            $this->setStatusCode($code);
-        }
+        $this->toJson($data, $code, $headers);
 
-        if ( count($data) === 0 ) {
-            $data = $this->content;
-        }
+        $safeJsonResponse = ")]}',\n" . $this->content;
 
-        if ( $data instanceof \Illuminate\Support\Collection
-            || $data instanceof \Illuminate\Database\Eloquent\Model
-        ) {
-            $data = $data->toArray();
-        }
+        $this->setContent($safeJsonResponse);
 
-        $status = ($this->statusCode >= 100 && $this->statusCode <= 308) ? 'success' : $this->statusText;
-
-        if ( is_scalar($data) ) {
-            $data = empty($data) ? [] : (array) $data;
-        }
-
-        $formatter = (new ResponseFormatter($data, $this->statusCode, $status));
-
-        // append other data to response formatter
-        if ( count($this->append) > 0 ) {
-            $formatter->add($this->append);
-        }
-
-        $content = $this->morphToJson($formatter->getResponse());
-
-        $safeResponse = ")]}',\n" . $content;
-
-        $default = [
-            'Content-Type' => 'application/json'
-        ];
-
-        return $this->setContent($safeResponse)->withHeaders(array_merge($default, $headers));
+        return $this;
     }
 
     /**
