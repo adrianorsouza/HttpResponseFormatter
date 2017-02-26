@@ -1,3 +1,7 @@
+v0.3.0
+------
+- requirements upgrade to Laravel v5.4 
+
 v0.2.1
 ------
 - minor refactoring
