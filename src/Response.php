@@ -73,7 +73,8 @@ class Response extends BaseResponse
             $this->setStatusCode($code);
         }
 
-        if ( count($data) === 0 ) {
+        // Support for PHP7.2
+        if ( is_array($data) && count($data) === 0 ) {
             $data = $this->content;
         }
 
